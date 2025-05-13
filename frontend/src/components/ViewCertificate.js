@@ -1,4 +1,4 @@
-import QRCode from 'qrcode.react';
+import { QRCodeCanvas } from 'qrcode.react';
 
 function ViewCertificate({ certId, studentName, course, issuer }) {
   // Create a verification URL
@@ -15,7 +15,7 @@ function ViewCertificate({ certId, studentName, course, issuer }) {
       
       <h3>Verification QR Code</h3>
       <div style={{ margin: '20px auto', display: 'inline-block', padding: '10px', background: 'white' }}>
-        <QRCode value={verificationUrl} size={200} />
+        <QRCodeCanvas value={verificationUrl} size={200} />
       </div>
       <p>Scan this code to verify the certificate</p>
     </div>
