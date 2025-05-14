@@ -36,3 +36,43 @@
     transform: rotate(360deg);
   }
 }
+
+/* Blockchain specific styles */
+.blockchain-alert {
+  background: #fff3cd;
+  padding: 15px;
+  margin: 20px 0;
+  border-left: 5px solid #ffc107;
+  border-radius: 4px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  background: #f8f9fa;
+  margin-bottom: 20px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #0d6efd;
+  padding: 8px 16px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.nav-links a:hover {
+  background-color: #e9ecef;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  background: #e9ecef;
+  color: #495057;
+  margin-left: 10px;
+}

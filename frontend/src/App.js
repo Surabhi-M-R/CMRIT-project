@@ -1,16 +1,32 @@
+
+// Add these at the top of your existing imports
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { BrowserRouter as Router, Routes, Route, useParams } from 'react-router-dom';
 import IssueCertificate from './components/IssueCertificate';
 import ViewCertificate from './components/ViewCertificate';
 import VerifyCertificate from './components/VerifyCertificate';
+import Navigation from './components/Navigation';
+import CertificateStatusBadge from './components/CertificateStatusBadge';
+
+// Helper components to handle URL params
+function ViewCertificateWrapper({ contract }) {
+  const { certId } = useParams();
+  return <ViewCertificate contract={contract} certId={certId} />;
+}
+
+function VerifyCertificateWrapper({ contract }) {
+  const { certId } = useParams();
+  return <VerifyCertificate contract={contract} certId={certId} />;
+}
 
 function App() {
   const [contract, setContract] = useState(null);
   const [account, setAccount] = useState('');
+  const [blockchainError, setBlockchainError] = useState('');
 
   // Contract configuration
-  const contractAddress = "0xB84749F4387c833cefBD01da37Faa9Ba6015Ea0d"; // Deployed contract address
+  const contractAddress = "0xB84749F4387c833cefBD01da37Faa9Ba6015Ea0d";
   const contractABI = [
     {
       "inputs": [],
@@ -101,81 +117,60 @@ function App() {
     }
   ];
 
-  const [error, setError] = useState('');
-
   useEffect(() => {
     const loadBlockchainData = async () => {
       if (window.ethereum) {
         try {
-          // Request account access
           await window.ethereum.request({ method: 'eth_requestAccounts' });
           const provider = new ethers.providers.Web3Provider(window.ethereum);
           const signer = provider.getSigner();
-          
-          // Create contract instance
           const certificateContract = new ethers.Contract(contractAddress, contractABI, signer);
           setContract(certificateContract);
-          
-          // Get connected account
           const accounts = await provider.listAccounts();
           setAccount(accounts[0]);
         } catch (error) {
-          console.error("Error loading blockchain data:", error);
-          setError(error.message);
+          console.error("Blockchain error:", error);
+          setBlockchainError(error.message);
         }
       } else {
-        setError('Please install MetaMask to use this application');
+        setBlockchainError('MetaMask not detected');
       }
     };
 
     loadBlockchainData();
-  }, []);
+  }, [contractAddress, contractABI]);
 
   return (
     <Router>
       <div className="App">
-        {error ? (
-          <div style={{ padding: '20px', textAlign: 'center', color: 'red' }}>
-            <h2>Error</h2>
-            <p>{error}</p>
-            <p>Please make sure to:</p>
-            <ol style={{ textAlign: 'left', display: 'inline-block' }}>
-              <li>Get some Sepolia testnet ETH from a faucet (e.g., https://sepoliafaucet.com/)</li>
-              <li>Deploy the smart contract using: npx hardhat run scripts/deploy.js --network sepolia</li>
-              <li>Update the contractAddress in App.js with the deployed contract address</li>
-            </ol>
-          </div>
-        ) : (
-          <div>
-            <h1>Blockchain Certificate System</h1>
-            <p>Connected account: {account || "Not connected"}</p>
-            <Routes>
-              <Route path="/" element={<IssueCertificate contract={contract} />} />
-              <Route path="/view/:certId" element={<ViewCertificateWrapper contract={contract} />} />
-              <Route path="/verify/:certId" element={<VerifyCertificateWrapper contract={contract} />} />
-            </Routes>
+        <Navigation contract={contract} account={account} />
+        
+        {blockchainError && (
+          <div className="blockchain-alert">
+            <h3>Blockchain Connection Issue</h3>
+            <p>{blockchainError}</p>
+            <p>Certificate features will be limited without blockchain connection</p>
           </div>
         )}
+
+        {contract && (
+          <CertificateStatusBadge account={account} />
+        )}
+
+        <Routes>
+          <Route path="/" element={<IssueCertificate contract={contract} />} />
+          <Route 
+            path="/certificates/view/:certId" 
+            element={<ViewCertificateWrapper contract={contract} />} 
+          />
+          <Route 
+            path="/certificates/verify/:certId" 
+            element={<VerifyCertificateWrapper contract={contract} />} 
+          />
+        </Routes>
       </div>
     </Router>
   );
-}
-
-// Helper components to handle URL params
-function ViewCertificateWrapper({ contract }) {
-  const { certId } = useParams();
-  // In a real app, fetch data from contract using certId
-  const dummyData = {
-    studentName: "Jane Doe",
-    course: "Web3 Development",
-    issuer: "Blockchain University"
-  };
-  return <ViewCertificate certId={certId} {...dummyData} />;
-}
-
-function VerifyCertificateWrapper({ contract }) {
-  const { certId } = useParams();
-  return <VerifyCertificate contract={contract} certId={certId} />;
 }
 
 export default App;
