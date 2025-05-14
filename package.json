@@ -8,7 +8,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.2.3",
     "@nomiclabs/hardhat-waffle": "^2.0.6",
@@ -20,6 +19,19 @@
   "dependencies": {
     "@metamask/sdk": "^0.32.1",
     "axios": "^1.9.0",
+    "dotenv": "^16.5.0",
     "qrcode.react": "^4.2.0"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Surabhi-M-R/CMRIT-project.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Surabhi-M-R/CMRIT-project/issues"
+  },
+  "homepage": "https://github.com/Surabhi-M-R/CMRIT-project#readme",
+  "description": ""
 }
